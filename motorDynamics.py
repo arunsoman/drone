@@ -13,6 +13,7 @@ the IR drop in the motor at that operating point.
 If you pick a KT=KeKT=Ke too high, you'll run out of voltage and won't be able to achieve the speed you need.
 If you pick a KT=KeKT=Ke too low, the current needed to achieve the torque you need will be higher than necessary.
 '''
+#Propeller constant = Propeller pitch / 1853.2
 
 def computeTorque(KT, I, I0):
     return KT(I - I0)
