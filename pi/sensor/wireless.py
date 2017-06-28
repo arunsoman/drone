@@ -6,6 +6,6 @@ class WirelessReader(object):
 
     @asyncio.coroutine
     def getData(self):
-        with open('workfile', 'r') as f:
+        with open('/proc/net/wireless', 'r') as f:
             for aLine in f:
             yield from aLine

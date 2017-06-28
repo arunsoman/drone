@@ -18,7 +18,7 @@ cd = 1
 while cd & <= 50:
     ck = 0
     fd = ''
-    while ck & <= 50:
+    while ck & <    = 50:
         rcv = port.read(10)
 
         fd = fd + rcv
