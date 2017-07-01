@@ -14,3 +14,4 @@ def magic():
     #https://www.rcgroups.com/forums/showthread.php?1086319-ESC-PWM-value-More-RPMs
     #http://community.silabs.com/t5/8-bit-MCU/relationship-between-motor-speed-and-PWM-frequency/td-p/83577
     #Fpolesw = 6*(poleNumber) / 2*rpm
+    return
