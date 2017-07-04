@@ -52,3 +52,4 @@ class GPS(object):
 
                 print s1
                 print s2
+                return s1,s2

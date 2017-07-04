@@ -82,6 +82,10 @@ class HMC5883L:
                "Declination: " + self.degrees(self.declination()) + "\n" \
                "Heading: " + self.degrees(self.heading()) + "\n"
 
+    def getYaw(self):
+        pass
+
+
 if __name__ == "__main__":
     # see http://www.magnetic-declination.com/     
     # Note: 1 Guass = 10E-4 Tesla

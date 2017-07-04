@@ -4,6 +4,9 @@ import time
 
 
 # BMP085 default address.
+#Digital Barometric Pressure Sensor
+import asyncio
+
 BMP085_I2CADDR           = 0x77
 
 # Operating Modes
@@ -33,7 +36,7 @@ BMP085_READTEMPCMD       = 0x2E
 BMP085_READPRESSURECMD   = 0x34
 
 
-class BMP185(object):
+class BMP180(object):
     def __init__(self, mode=BMP085_STANDARD, address=BMP085_I2CADDR, i2c=None, **kwargs):
         self._logger = logging.getLogger('BMP.BMP085')
         # Check that mode is valid.
@@ -165,7 +168,8 @@ class BMP185(object):
         self._logger.debug('Pressure {0} Pa'.format(p))
         return p
 
-    def read_altitude(self, sealevel_pa=101325.0):
+    asyncio.coroutine
+    def getAltitude(self, sealevel_pa=101325.0):
         """Calculates the altitude in meters."""
         # Calculation taken straight from section 3.6 of the datasheet.
         pressure = float(self.read_pressure())

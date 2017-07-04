@@ -74,6 +74,9 @@ class GY521(object):
 
         return gyro_out, gyro_out_scale, acc_out, acc_out_scale
 
+    def getRollPitch(self):
+        #//TODO
+        return 0,0
 
 if __name__ == '__main__':
     # test
