@@ -1,4 +1,9 @@
-import asyncio
+import threading
+
+def threadify(fn):
+    def func(*args,**kwargs):
+        return threading.Thread(target=fn, args=args, kwargs=kwargs)
+    return func
 
 
 class Motor(object):
@@ -14,7 +19,7 @@ class Motor(object):
         self.__kv = kv
         self.__WMin = WMin if WMin >=0 else 0
         self.__WMax = WMax if WMin <=100 else 100
-        self.setDebug(debug)
+        # self.setDebug(debug)
         self.__W = self.__WMin
         self.__Wh = 10
         try:
@@ -23,7 +28,22 @@ class Motor(object):
         except ImportError:
             self.simulation = True
 
-    @asyncio.coroutine
+    
+    def _setw(self, W):
+        "Checks W% is between limits than sets it"
+        print ("bb", W)
+        PW = 0
+        self.__W = W
+        if self.__W < self.__WMin:
+            self.__W = self.__WMin
+        if self.__W > self.__WMax:
+            self.__W = self.__WMax
+        PW = (1000 + (self.__W) * 10)
+        # Set servo to xxx us
+        if self.powered:
+            self.__IO.set_servo(self.__pin, PW)
+
+    @threadify
     def start(self):
         "Run the procedure to init the PWM"
         if not self.simulation:
@@ -37,35 +57,25 @@ class Motor(object):
                 self.simulation = True
                 self.powered = False
 
-    @asyncio.coroutine
+    @threadify
     def stop(self):
         "Stop PWM signal"
-        self.setW (0)
+        self._setw (0)
         if self.powered:
             self.__IO.stop_servo(self.__pin)
             self.powered = False
 
-    @asyncio.coroutine
+    @threadify
     def setW(self, W):
-        "Checks W% is between limits than sets it"
-        PW = 0
-        self.__W = W
-        if self.__W < self.__WMin:
-            self.__W = self.__WMin
-        if self.__W > self.__WMax:
-            self.__W = self.__WMax
-        PW = (1000 + (self.__W) * 10)
-        # Set servo to xxx us
-        if self.powered:
-            self.__IO.set_servo(self.__pin, PW)
+        self._setw(W)
 
-    @asyncio.coroutine
+    @threadify
     def increaseW(self, step=1):
-        self.setW(self.__W + step)
+        self._setw(self.__W + step)
 
-    @asyncio.coroutine
+    @threadify
     def decreaseW(self, step=1):
-        self.setW(self.__W - step)
+        self._setw(self.__W - step)
 
     def torque(self):
         return self.dragCoeff*(self.omega**2)
@@ -84,3 +94,6 @@ class Motor(object):
 
     def getOmegaGiven(self, volt):
         return
+
+    def __repr__(self):
+        return "<%s(%s) @ %s>" % (self.name, self.__pin, self.__W)

@@ -1,6 +1,6 @@
 import asyncio
 
-from . import motor
+import motor
 
 
 class ThrustManager(object):
@@ -18,9 +18,10 @@ class ThrustManager(object):
         self.__motors = [self.__motor1, self.__motor2, self.__motor3, self.__motor4, ]
 
     def __execute(self, tasks):
-        loop = asyncio.get_event_loop()
-        loop.run_until_complete(asyncio.wait(tasks))
-        loop.close()
+        for i in tasks:
+            i.start()
+        for i in tasks:
+            i.join()
 
     def startEngine(self):
         tasks = [
@@ -84,7 +85,7 @@ class ThrustManager(object):
         ]
         self.__execute(tasks)
 
-    def __manual(self, s1, s2, s3, s4):
+    def _manual(self, s1, s2, s3, s4):
         tasks = [
             self.__motor4.increaseW(s1),
             self.__motor3.increaseW(s2),
@@ -106,3 +107,14 @@ class ThrustManager(object):
             lk * (-self.__motor1.torqueSq() + self.__motor3.torqueSq()),
             self.totalTorque()
         ]
+    
+    def print_motors(self):
+        print("\t".join(map(repr,self.__motors)))
+
+
+
+if __name__ == "__main__":
+    t = ThrustManager()
+    t.print_motors()
+    t._manual(10,20,30,15)
+    t.print_motors()
