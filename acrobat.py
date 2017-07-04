@@ -1,7 +1,7 @@
 import motorDynamics as md
-import mortor
+import motor
 
-define main():
+def main():
   mass = 1#kg
   gForce = mass*9.98
   initaialForce = gForce
@@ -22,5 +22,5 @@ define main():
   def land():
     return
   
- def howerAt(mrter):
+  def howerAt(meter):
     return

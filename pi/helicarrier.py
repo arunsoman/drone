@@ -6,7 +6,7 @@ import numpy
 
 from model.copterDynamics import rigid_transform_3D, getRollPitchYaw
 from model.thrustManager import ThrustManager
-from sensor.sensorconsole import SensorConsole
+from sensorconsole import SensorConsole
 
 class HeliCarrier(object):
     def __init__(self):

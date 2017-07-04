@@ -3,9 +3,14 @@
 import numpy as np
 import asyncio
 import time
-import smbus
 import math
 
+
+try:
+    # for the sake of testing.
+    import smbus
+except:
+    from . import _moking as smbus
 
 class GY521(object):
 
@@ -90,5 +95,6 @@ if __name__ == '__main__':
             print ("acc_out_scale: ", acc_out_scale)
             print (
             "getRotation", imu.get_rotation(gyro_out_scale, "X"), imu.get_rotation(gyro_out_scale, "Y"), imu.get_rotation(gyro_out_scale, "Z"))
+            break
             time.sleep(2)
 

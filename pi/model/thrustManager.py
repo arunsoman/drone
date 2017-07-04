@@ -1,6 +1,6 @@
 import asyncio
 
-import motor
+from . import motor
 
 
 class ThrustManager(object):

@@ -3,9 +3,8 @@ import asyncio
 
 class WirelessReader(object):
     def __init__(self):
+        pass
 
-    @asyncio.coroutine
     def getData(self):
         with open('/proc/net/wireless', 'r') as f:
-            for aLine in f:
-            yield from aLine
+            return parse_signal_level(f.read())

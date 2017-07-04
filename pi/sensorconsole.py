@@ -1,6 +1,6 @@
 import asyncio
 
-from sensor import *
+from sensor import (GPS,BMP180,GY521,HMC5883L)
 
 class SensorConsole(object):
     def __init__(self):
@@ -10,7 +10,7 @@ class SensorConsole(object):
         self.compass = HMC5883L()
     
 
-    asyncio.coroutine
+    @asyncio.coroutine
     def readSensorData(self, copter ):
         lat, long = self.gps.getLatLong()
         copter.initialStateSpace.lat = lat

@@ -1,11 +1,10 @@
 from __future__ import division
 import logging
 import time
-
+import asyncio
 
 # BMP085 default address.
-#Digital Barometric Pressure Sensor
-import asyncio
+# Digital Barometric Pressure Sensor
 
 BMP085_I2CADDR           = 0x77
 
@@ -168,7 +167,7 @@ class BMP180(object):
         self._logger.debug('Pressure {0} Pa'.format(p))
         return p
 
-    asyncio.coroutine
+    @asyncio.coroutine
     def getAltitude(self, sealevel_pa=101325.0):
         """Calculates the altitude in meters."""
         # Calculation taken straight from section 3.6 of the datasheet.

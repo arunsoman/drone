@@ -40,7 +40,7 @@ def rigid_transform_3D(A, B):
 
     # special reflection case
     if linalg.det(R) < 0:
-       print "Reflection detected"
+       print("Reflection detected")
        Vt[2,:] *= -1
        R = Vt.T * U.T
 
@@ -85,24 +85,17 @@ def tt():
     err = sum(err)
     rmse = sqrt(err / n);
 
-    print "Points A"
-    print A
-    print ""
+    print("Points A",A)
 
-    print "Points B"
-    print B
-    print ""
+    print("Points B",B)
 
-    print "Rotation"
-    print ret_R
-    print ""
+    print ("Rotation",ret_R)
 
-    print "Translation"
-    print ret_t
-    print ""
 
-    print "RMSE:", rmse
-    print "If RMSE is near zero, the function is correct!"
+    print ("Translation",ret_t)
+
+    print ("RMSE:", rmse)
+    print ("If RMSE is near zero, the function is correct!")
 
 
 # Calculates rotation matrix to euler angles

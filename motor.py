@@ -1,4 +1,4 @@
-def motor();
+def motor():
    motorWeight=.56
    requestedAV = 0
    currentAV = 0

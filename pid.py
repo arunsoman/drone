@@ -1,5 +1,3 @@
-
-
 import numpy as np
 import time as tm
 
@@ -8,9 +6,7 @@ def createPID(Kp, Ki, Kd):
   err,prevErr =0
   errs= [0]
   def compute(currTime):
-    return Kp*err+ 
-    ki*sum((int)i for i in errs) + 
-    Kd*slope(currTime)
+    return Kp*err + ki*sum( int(i) for i in errs) +  Kd*slope(currTime)
     
   def start(error):
     err = error
@@ -23,7 +19,7 @@ def createPID(Kp, Ki, Kd):
     err = error
     return compute(int(round(time.time() * 1000)))
     
-  return {'start': start, 'update', update}
+  return {'start': start, 'update': update}
   
 def test():
   pid = createPID(1, -.08, -.23)

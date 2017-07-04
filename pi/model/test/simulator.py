@@ -17,4 +17,4 @@ class Rotor(object):
         return Quaternion(axis=axis, degrees=degrees).rotate(point)
 
 r = Rotor()
-print r.rotateX(numpy.array([1,0,1]), 180)
+print(r.rotateX(numpy.array([1,0,1]), 180))

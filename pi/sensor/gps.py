@@ -1,11 +1,15 @@
 import serial
-import RPi.GPIO as GPIO
 import os, time
 from decimal import *
 
-delay = 1
 
-GPIO.setmode(GPIO.BOARD)
+try:
+    # for the sake of testing.
+    import RPi.GPIO as GPIO
+    GPIO.setmode(GPIO.BOARD)
+except:
+    pass  
+
 
 class GPS(object):
     def __init__(self):
@@ -33,7 +37,7 @@ class GPS(object):
             # print dif
             if dif > 50:
                 data = fd[ps:(ps + 50)]
-                print data
+                print(data)
                 p = list(self.__find(data, ","))
                 lat = data[(p[2] + 1):p[3]]
                 lon = data[(p[4] + 1):p[5]]
@@ -50,6 +54,6 @@ class GPS(object):
                 s22 = int(lon[0:3])
                 s2 = s22 + s2
 
-                print s1
-                print s2
+                print(s1)
+                print(s2)
                 return s1,s2

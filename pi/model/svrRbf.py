@@ -1,7 +1,7 @@
 import numpy as np
 from sklearn.svm import SVR
-import matplotlib.pyplot as plt
-
+# import matplotlib.pyplot as plt
+import matplotlib.pyplot
 def learn(x,y,c=1e3, gamma=0.1):
     svr_rbf = SVR(kernel='rbf',C=c, gamma=gamma )
     model = svr_rbf.fit(x, y)

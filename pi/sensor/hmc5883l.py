@@ -1,7 +1,13 @@
-import smbus
 import math
 import time
 import sys
+
+
+try:
+    # for the sake of testing.
+    import smbus
+except:
+    from . import _moking as smbus
 
 class HMC5883L:
 
@@ -83,7 +89,7 @@ class HMC5883L:
                "Heading: " + self.degrees(self.heading()) + "\n"
 
     def getYaw(self):
-        pass
+        return 0 # TODO: estimate yaw from heading angle.
 
 
 if __name__ == "__main__":
@@ -92,7 +98,7 @@ if __name__ == "__main__":
     # kazhakuttam:  gauss=0.403, declination= 1 degreee 57 minutes
     compass = HMC5883L(gauss = 4.7, declination = (1,57))
 
-    yaw = self.compass.read_compensated_bearing(pitch, roll)
+    yaw = compass.read_compensated_bearing(pitch, roll)
     
     while True:
         sys.stdout.write("\rHeading: " + str(compass.degrees(compass.heading())) + "     ")
