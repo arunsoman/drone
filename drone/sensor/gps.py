@@ -1,5 +1,6 @@
 import serial
-import os, time
+import os
+import time
 from decimal import *
 
 
@@ -8,12 +9,15 @@ try:
     import RPi.GPIO as GPIO
     GPIO.setmode(GPIO.BOARD)
 except:
-    pass  
+    pass
 
 
 class GPS(object):
     def __init__(self):
-        self.port = serial.Serial("/dev/ttyAMA0", baudrate=9600, timeout=1)
+        try:
+            self.port = serial.Serial("/dev/ttyAMA0", baudrate=9600, timeout=1)
+        except:
+            pass
 
     def __find(str, ch):
         for i, ltr in enumerate(str):
@@ -25,7 +29,7 @@ class GPS(object):
         while fd.find('$GPRMC') > 0:
             fd = ''
             ck = 0
-            while ck  <= 50:
+            while ck <= 50:
                 rcv = self.port.read(10)
                 fd = fd + rcv
                 ck = ck + 1
@@ -56,4 +60,4 @@ class GPS(object):
 
                 print(s1)
                 print(s2)
-                return s1,s2
+                return s1, s2

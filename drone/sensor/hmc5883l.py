@@ -6,8 +6,9 @@ import sys
 try:
     # for the sake of testing.
     import smbus
-except:
+except ImportError:
     from . import _moking as smbus
+
 
 class HMC5883L:
 
@@ -22,7 +23,7 @@ class HMC5883L:
         8.10: [7, 4.35],
     }
 
-    def __init__(self, port=1, address=0x1E, gauss=1.3, declination=(1,57)):
+    def __init__(self, port=1, address=0x1E, gauss=1.3, declination=(1, 57)):
         self.bus = smbus.SMBus(port)
         self.address = address
 
@@ -32,9 +33,11 @@ class HMC5883L:
         self.__declination = (degrees + minutes / 60) * math.pi / 180
 
         (reg, self.__scale) = self.__scales[gauss]
-        self.bus.write_byte_data(self.address, 0x00, 0x70) # 8 Average, 15 Hz, normal measurement
-        self.bus.write_byte_data(self.address, 0x01, reg << 5) # Scale
-        self.bus.write_byte_data(self.address, 0x02, 0x00) # Continuous measurement
+        # 8 Average, 15 Hz, normal measurement
+        self.bus.write_byte_data(self.address, 0x00, 0x70)
+        self.bus.write_byte_data(self.address, 0x01, reg << 5)  # Scale
+        # Continuous measurement
+        self.bus.write_byte_data(self.address, 0x02, 0x00)
 
     def declination(self):
         return (self.__declDegrees, self.__declMinutes)
@@ -42,21 +45,22 @@ class HMC5883L:
     def twos_complement(self, val, len):
         # Convert twos compliment to integer
         if (val & (1 << len - 1)):
-            val = val - (1<<len)
+            val = val - (1 << len)
         return val
 
     def __convert(self, data, offset):
-        val = self.twos_complement(data[offset] << 8 | data[offset+1], 16)
-        if val == -4096: return None
+        val = self.twos_complement(data[offset] << 8 | data[offset + 1], 16)
+        if val == -4096:
+            return None
         return round(val * self.__scale, 4)
 
     def axes(self):
         data = self.bus.read_i2c_block_data(self.address, 0x00)
-        #print map(hex, data)
+        # print map(hex, data)
         x = self.__convert(data, 3)
         y = self.__convert(data, 7)
         z = self.__convert(data, 5)
-        return (x,y,z)
+        return (x, y, z)
 
     def heading(self):
         (x, y, z) = self.axes()
@@ -89,22 +93,22 @@ class HMC5883L:
                "Heading: " + self.degrees(self.heading()) + "\n"
 
     def getYaw(self):
-        return 0 # TODO: estimate yaw from heading angle.
+        return 0  # TODO: estimate yaw from heading angle.
 
 
 if __name__ == "__main__":
-    # see http://www.magnetic-declination.com/     
+    # see http://www.magnetic-declination.com/
     # Note: 1 Guass = 10E-4 Tesla
     # kazhakuttam:  gauss=0.403, declination= 1 degreee 57 minutes
-    compass = HMC5883L(gauss = 4.7, declination = (1,57))
+    compass = HMC5883L(gauss=4.7, declination=(1, 57))
 
     yaw = compass.read_compensated_bearing(pitch, roll)
-    
+
     while True:
-        sys.stdout.write("\rHeading: " + str(compass.degrees(compass.heading())) + "     ")
+        sys.stdout.write(
+            "\rHeading: " + str(compass.degrees(compass.heading())) + "     ")
         sys.stdout.flush()
         time.sleep(0.5)
-
 
 
 # http://blog.bitify.co.uk/2013/11/connecting-and-calibrating-hmc5883l.html

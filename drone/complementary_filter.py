@@ -19,8 +19,10 @@ def ComplementaryFilter(gyrData, accData, pitch, roll):
     rollAcc = 0.0
 
     # Integrate the gyroscope data -> int(angularSpeed) = angle
-    pitch += (gyrData[0] / GYROSCOPE_SENSITIVITY) * dt  # Angle around the X-axis
-    roll -= (gyrData[1] / GYROSCOPE_SENSITIVITY) *  dt  # Angle around the Y-axis
+    pitch += (gyrData[0] / GYROSCOPE_SENSITIVITY) * \
+        dt  # Angle around the X-axis
+    roll -= (gyrData[1] / GYROSCOPE_SENSITIVITY) * \
+        dt  # Angle around the Y-axis
 
     # Compensate for drift with accelerometer data if !bullshit
     # Sensitivity = -2 to 2 G at 16Bit -> 2G = 32768 && 0.5G = 8192
@@ -41,11 +43,11 @@ if __name__ == '__main__':
     import sys
     pitch = 0
     roll = 0
-    i = 0;
+    i = 0
     mpu = GY521()
     while True:
         gyro_out, acc_out,  = mpu.raw_data()
-        pitch, roll = ComplementaryFilter(gyro_out,acc_out, pitch, roll)
+        pitch, roll = ComplementaryFilter(gyro_out, acc_out, pitch, roll)
         # sys.stderr.write("Acc: %s \t Gyr: %s                     \r" %(acc_out_scale, gyro_out_scale))
         i += 1
         if not (i % 10):
@@ -54,7 +56,6 @@ if __name__ == '__main__':
             sys.stderr.flush()
             i = 0
 
-        
         # print ("gyro_out: ", gyro_out)
         # print ("acc_out: ", acc_out)
         # print ("gyro_out_scale: ", gyro_out_scale)

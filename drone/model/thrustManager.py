@@ -1,6 +1,4 @@
-import asyncio
-
-import motor
+from . import motor
 
 
 class ThrustManager(object):
@@ -15,7 +13,8 @@ class ThrustManager(object):
         # '''ccw'''
         self.__motor2 = motor.Motor('m2', 18, simulation=False)
         self.__motor4 = motor.Motor('m4', 22, simulation=False)
-        self.__motors = [self.__motor1, self.__motor2, self.__motor3, self.__motor4, ]
+        self.__motors = [self.__motor1, self.__motor2,
+                         self.__motor3, self.__motor4, ]
 
     def __execute(self, tasks):
         for i in tasks:
@@ -45,7 +44,7 @@ class ThrustManager(object):
         tasks = [
             self.__motor2.setW(step),
             self.__motor4.setW(step)
-        ] if direction is 'left'  else[
+        ] if direction is 'left' else[
             self.__motor1.setW(step),
             self.__motor3.setW(step)
         ]
@@ -55,7 +54,7 @@ class ThrustManager(object):
         tasks = [
             self.__motor2.setW(step),
             self.__motor1.setW(step)
-        ] if direction is 'up'  else[
+        ] if direction is 'up' else[
             self.__motor4.setW(step),
             self.__motor3.setW(step)
         ]
@@ -65,7 +64,7 @@ class ThrustManager(object):
         tasks = [
             self.__motor4.setW(step),
             self.__motor1.setW(step)
-        ] if direction is 'cw'  else[
+        ] if direction is 'cw' else[
             self.__motor2.setW(step),
             self.__motor3.setW(step)
         ]
@@ -77,7 +76,7 @@ class ThrustManager(object):
             self.__motor3.increaseW(step),
             self.__motor2.increaseW(step),
             self.__motor1.increaseW(step),
-        ] if direction is 'assend'  else[
+        ] if direction is 'assend' else[
             self.__motor4.decreaseW(step),
             self.__motor3.decreaseW(step),
             self.__motor2.decreaseW(step),
@@ -107,14 +106,6 @@ class ThrustManager(object):
             lk * (-self.__motor1.torqueSq() + self.__motor3.torqueSq()),
             self.totalTorque()
         ]
-    
+
     def print_motors(self):
-        print("\t".join(map(repr,self.__motors)))
-
-
-
-if __name__ == "__main__":
-    t = ThrustManager()
-    t.print_motors()
-    t._manual(10,20,30,15)
-    t.print_motors()
+        print("\t".join(map(repr, self.__motors)))

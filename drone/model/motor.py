@@ -1,7 +1,8 @@
 import threading
 
+
 def threadify(fn):
-    def func(*args,**kwargs):
+    def func(*args, **kwargs):
         return threading.Thread(target=fn, args=args, kwargs=kwargs)
     return func
 
@@ -17,8 +18,8 @@ class Motor(object):
         self.simulation = simulation
         self.__pin = pin
         self.__kv = kv
-        self.__WMin = WMin if WMin >=0 else 0
-        self.__WMax = WMax if WMin <=100 else 100
+        self.__WMin = WMin if WMin >= 0 else 0
+        self.__WMax = WMax if WMin <= 100 else 100
         # self.setDebug(debug)
         self.__W = self.__WMin
         self.__Wh = 10
@@ -28,10 +29,8 @@ class Motor(object):
         except ImportError:
             self.simulation = True
 
-    
     def _setw(self, W):
         "Checks W% is between limits than sets it"
-        print ("bb", W)
         PW = 0
         self.__W = W
         if self.__W < self.__WMin:
@@ -51,8 +50,8 @@ class Motor(object):
                 from RPIO import PWM
                 self.__IO = PWM.Servo()
                 self.powered = True
-                #TODO Decide How to manage the WMax < 100
-                #to keep anyhow the throttle range 0-100
+                # TODO Decide How to manage the WMax < 100
+                # to keep anyhow the throttle range 0-100
             except ImportError:
                 self.simulation = True
                 self.powered = False
@@ -60,7 +59,7 @@ class Motor(object):
     @threadify
     def stop(self):
         "Stop PWM signal"
-        self._setw (0)
+        self._setw(0)
         if self.powered:
             self.__IO.stop_servo(self.__pin)
             self.powered = False
@@ -78,10 +77,10 @@ class Motor(object):
         self._setw(self.__W - step)
 
     def torque(self):
-        return self.dragCoeff*(self.omega**2)
+        return self.dragCoeff * (self.omega**2)
 
     def thrust(self):
-        return self.liftConst*(self.omega**2)
+        return self.liftConst * (self.omega**2)
 
     def getOmegaSq(self):
         return self.omega**2

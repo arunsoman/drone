@@ -6,33 +6,33 @@ import asyncio
 # BMP085 default address.
 # Digital Barometric Pressure Sensor
 
-BMP085_I2CADDR           = 0x77
+BMP085_I2CADDR = 0x77
 
 # Operating Modes
-BMP085_ULTRALOWPOWER     = 0
-BMP085_STANDARD          = 1
-BMP085_HIGHRES           = 2
-BMP085_ULTRAHIGHRES      = 3
+BMP085_ULTRALOWPOWER = 0
+BMP085_STANDARD = 1
+BMP085_HIGHRES = 2
+BMP085_ULTRAHIGHRES = 3
 
 # BMP085 Registers
-BMP085_CAL_AC1           = 0xAA  # R   Calibration data (16 bits)
-BMP085_CAL_AC2           = 0xAC  # R   Calibration data (16 bits)
-BMP085_CAL_AC3           = 0xAE  # R   Calibration data (16 bits)
-BMP085_CAL_AC4           = 0xB0  # R   Calibration data (16 bits)
-BMP085_CAL_AC5           = 0xB2  # R   Calibration data (16 bits)
-BMP085_CAL_AC6           = 0xB4  # R   Calibration data (16 bits)
-BMP085_CAL_B1            = 0xB6  # R   Calibration data (16 bits)
-BMP085_CAL_B2            = 0xB8  # R   Calibration data (16 bits)
-BMP085_CAL_MB            = 0xBA  # R   Calibration data (16 bits)
-BMP085_CAL_MC            = 0xBC  # R   Calibration data (16 bits)
-BMP085_CAL_MD            = 0xBE  # R   Calibration data (16 bits)
-BMP085_CONTROL           = 0xF4
-BMP085_TEMPDATA          = 0xF6
-BMP085_PRESSUREDATA      = 0xF6
+BMP085_CAL_AC1 = 0xAA  # R   Calibration data (16 bits)
+BMP085_CAL_AC2 = 0xAC  # R   Calibration data (16 bits)
+BMP085_CAL_AC3 = 0xAE  # R   Calibration data (16 bits)
+BMP085_CAL_AC4 = 0xB0  # R   Calibration data (16 bits)
+BMP085_CAL_AC5 = 0xB2  # R   Calibration data (16 bits)
+BMP085_CAL_AC6 = 0xB4  # R   Calibration data (16 bits)
+BMP085_CAL_B1 = 0xB6  # R   Calibration data (16 bits)
+BMP085_CAL_B2 = 0xB8  # R   Calibration data (16 bits)
+BMP085_CAL_MB = 0xBA  # R   Calibration data (16 bits)
+BMP085_CAL_MC = 0xBC  # R   Calibration data (16 bits)
+BMP085_CAL_MD = 0xBE  # R   Calibration data (16 bits)
+BMP085_CONTROL = 0xF4
+BMP085_TEMPDATA = 0xF6
+BMP085_PRESSUREDATA = 0xF6
 
 # Commands
-BMP085_READTEMPCMD       = 0x2E
-BMP085_READPRESSURECMD   = 0x34
+BMP085_READTEMPCMD = 0x2E
+BMP085_READPRESSURECMD = 0x34
 
 
 class BMP180(object):
@@ -40,7 +40,8 @@ class BMP180(object):
         self._logger = logging.getLogger('BMP.BMP085')
         # Check that mode is valid.
         if mode not in [BMP085_ULTRALOWPOWER, BMP085_STANDARD, BMP085_HIGHRES, BMP085_ULTRAHIGHRES]:
-            raise ValueError('Unexpected mode value {0}.  Set mode to one of BMP085_ULTRALOWPOWER, BMP085_STANDARD, BMP085_HIGHRES, or BMP085_ULTRAHIGHRES'.format(mode))
+            raise ValueError(
+                'Unexpected mode value {0}.  Set mode to one of BMP085_ULTRALOWPOWER, BMP085_STANDARD, BMP085_HIGHRES, or BMP085_ULTRAHIGHRES'.format(mode))
         self._mode = mode
         # Create I2C device.
         if i2c is None:
@@ -99,7 +100,8 @@ class BMP180(object):
 
     def read_raw_pressure(self):
         """Reads the raw (uncompensated) pressure level from the sensor."""
-        self._device.write8(BMP085_CONTROL, BMP085_READPRESSURECMD + (self._mode << 6))
+        self._device.write8(
+            BMP085_CONTROL, BMP085_READPRESSURECMD + (self._mode << 6))
         if self._mode == BMP085_ULTRALOWPOWER:
             time.sleep(0.005)
         elif self._mode == BMP085_HIGHRES:
@@ -109,10 +111,11 @@ class BMP180(object):
         else:
             time.sleep(0.008)
         msb = self._device.readU8(BMP085_PRESSUREDATA)
-        lsb = self._device.readU8(BMP085_PRESSUREDATA+1)
-        xlsb = self._device.readU8(BMP085_PRESSUREDATA+2)
+        lsb = self._device.readU8(BMP085_PRESSUREDATA + 1)
+        xlsb = self._device.readU8(BMP085_PRESSUREDATA + 2)
         raw = ((msb << 16) + (lsb << 8) + xlsb) >> (8 - self._mode)
-        self._logger.debug('Raw pressure 0x{0:04X} ({1})'.format(raw & 0xFFFF, raw))
+        self._logger.debug(
+            'Raw pressure 0x{0:04X} ({1})'.format(raw & 0xFFFF, raw))
         return raw
 
     def read_temperature(self):
@@ -172,7 +175,7 @@ class BMP180(object):
         """Calculates the altitude in meters."""
         # Calculation taken straight from section 3.6 of the datasheet.
         pressure = float(self.read_pressure())
-        altitude = 44330.0 * (1.0 - pow(pressure / sealevel_pa, (1.0/5.255)))
+        altitude = 44330.0 * (1.0 - pow(pressure / sealevel_pa, (1.0 / 5.255)))
         self._logger.debug('Altitude {0} m'.format(altitude))
         return altitude
 
@@ -180,6 +183,6 @@ class BMP180(object):
         """Calculates the pressure at sealevel when given a known altitude in
         meters. Returns a value in Pascals."""
         pressure = float(self.read_pressure())
-        p0 = pressure / pow(1.0 - altitude_m/44330.0, 5.255)
+        p0 = pressure / pow(1.0 - altitude_m / 44330.0, 5.255)
         self._logger.debug('Sealevel pressure {0} Pa'.format(p0))
         return p0

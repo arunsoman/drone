@@ -3,26 +3,27 @@ from numpy import *
 from math import sqrt, atan2
 
 
-#all methods will return only translation vector
+# all methods will return only translation vector
 
-def moveTo(a,b):
+def moveTo(a, b):
     if a.x is b.x and a.y is b.y:
-        #perform vertical motion
-        return [0,0,b.z - a.z]
+        # perform vertical motion
+        return [0, 0, b.z - a.z]
 
     if a.z is b.z:
-        #perform horizontal motion
+        # perform horizontal motion
         return [b.x - a.x, b.y - a.y, 0]
     return
 
+
 def rotate(a, axis, theta):
-    return dot(expm3(cross(eye(3), axis/norm(axis)*theta)),a)
+    return dot(expm3(cross(eye(3), axis / norm(axis) * theta)), a)
 
 
 def rigid_transform_3D(A, B):
     assert len(A) == len(B)
 
-    N = A.shape[0]; # total points
+    N = A.shape[0]  # total points
 
     centroid_A = mean(A, axis=0)
     centroid_B = mean(B, axis=0)
@@ -40,12 +41,13 @@ def rigid_transform_3D(A, B):
 
     # special reflection case
     if linalg.det(R) < 0:
-       print("Reflection detected")
-       Vt[2,:] *= -1
-       R = Vt.T * U.T
+        print("Reflection detected")
+        Vt[2, :] *= -1
+        R = Vt.T * U.T
 
-    t = -R*centroid_A.T + centroid_B.T
+    t = -R * centroid_A.T + centroid_B.T
     return R, t
+
 
 def tt():
     '''
@@ -70,8 +72,8 @@ def tt():
     B = B.T
     '''
     n = 1
-    A=array([[1,0,0]])
-    B=array([[0,0,1]])
+    A = array([[1, 0, 0]])
+    B = array([[0, 0, 1]])
     # recover the transformation
     ret_R, ret_t = rigid_transform_3D(A, B)
 
@@ -83,16 +85,15 @@ def tt():
 
     err = multiply(err, err)
     err = sum(err)
-    rmse = sqrt(err / n);
+    rmse = sqrt(err / n)
 
-    print("Points A",A)
+    print("Points A", A)
 
-    print("Points B",B)
+    print("Points B", B)
 
-    print ("Rotation",ret_R)
+    print ("Rotation", ret_R)
 
-
-    print ("Translation",ret_t)
+    print ("Translation", ret_t)
 
     print ("RMSE:", rmse)
     print ("If RMSE is near zero, the function is correct!")
@@ -112,13 +113,17 @@ def getRollPitchYaw(R):
         x = math.atan2(-R[1, 2], R[1, 1])
         y = math.atan2(-R[2, 0], sy)
         z = 0
-    print("x,y,z");print(x,y,z)
+    print("x,y,z")
+    print(x, y, z)
     return x, y, z
+
 
 def rotateT():
     v, axis, theta = [3, 5, 0], [4, 4, 1], 1.2
     M0 = rotate(v, axis, theta)
-    print("rotatation M"); print( M0)
+    print("rotatation M")
+    print(M0)
     #print("dotProduct", dot(M0, v))
+
 
 tt()

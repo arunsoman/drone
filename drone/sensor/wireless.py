@@ -1,6 +1,7 @@
 
 import asyncio
 
+
 class WirelessReader(object):
     def __init__(self):
         pass
