@@ -14,7 +14,7 @@ def main():
   
   def start():
     torquePerMoyor = initialForce/4;
-    motor1.setTorgue(torquePerMotor);
+    motor1.setTorque(torquePerMotor);
     motor2.setTorque(torquePerMotor)
     motor3.setTorque(torquePerMotor)
     motor4.setTorque(torquePerMotor)

@@ -1,9 +1,4 @@
-#!/usr/bin/python
-
-import numpy as np
-import asyncio
 import time
-import smbus
 import math
 
 

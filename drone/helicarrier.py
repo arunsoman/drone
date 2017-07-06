@@ -17,14 +17,16 @@ class HeliCarrier(object):
         self.thrustManager = ThrustManager()
         self.state = 'stopped'
         self.log = False
-        self.loop = asyncio.get_event_loop()
-        self.loop.create_task(SensorConsole().readSensorData(self))
 
     def start(self):
+        (asyncio.get_event_loop()
+            .create_task(SensorConsole().readSensorData(self)))
         self.thrustManager.startEngine()
+        self.state = "started"
 
     def stop(self):
         self.thrustManager.stopEngine()
+        self.state = "stopped"
 
     def getCurrentLocation(self):
         return self.currentStateSpace
