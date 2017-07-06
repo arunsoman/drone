@@ -16,6 +16,15 @@ class StateSpace(object):
                             self.long - sp.long,
                             self.altitude - sp.altitude])
 
+    def get_state_dict(self):
+        return {'lat': self.lat,
+                'long': self.long,
+                'altitude': self.altitude,
+                'roll': self.roll,
+                'pitch': self.pitch,
+                'yaw': self.yaw
+                }
+
     def log(self):
         # for testing
         sys.stderr.write(

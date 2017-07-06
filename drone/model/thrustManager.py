@@ -109,3 +109,9 @@ class ThrustManager(object):
 
     def print_motors(self):
         print("\t".join(map(repr, self.__motors)))
+
+    def get_pwm_dict(self):
+        """
+        return a dict of pwm of each motor.
+        """
+        return {m.name:m.get_w() for m in self.__motors}

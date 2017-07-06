@@ -42,6 +42,9 @@ class Motor(object):
         if self.powered:
             self.__IO.set_servo(self.__pin, PW)
 
+    def get_w(self):
+        return self.__W
+    
     @threadify
     def start(self):
         "Run the procedure to init the PWM"
