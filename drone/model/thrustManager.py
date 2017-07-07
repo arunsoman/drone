@@ -114,7 +114,7 @@ class ThrustManager(object):
         """
         return a dict of pwm of each motor.
         """
-        return "m1:%s,m2:%s,m1:%s,m2:%s" % (self.__motor1.get_w(),
+        return """"m1":%s,"m2":%s,"m1":%s,"m2":%s""" % (self.__motor1.get_w(),
                                             self.__motor2.get_w(),
                                             self.__motor2.get_w(),
                                             self.__motor3.get_w())

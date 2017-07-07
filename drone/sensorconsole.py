@@ -6,9 +6,11 @@ from .complementary_filter import ComplementaryFilter
 class SensorConsole(object):
     def __init__(self):
         self.gps = GPS()
-        # self.bmp = BMP180()
+        self.bmp = BMP180()
         self.gyro = GY521()
-        self.compass = HMC5883L()
+        # self.compass = HMC5883L()
+        print(self.gps.start_recording())
+        asyncio.get_event_loop().create_task(self.gps.start_recording())
 
     @asyncio.coroutine
     def readSensorData(self, copter):
@@ -23,18 +25,22 @@ class SensorConsole(object):
         # copter.initialStateSpace.yaw = self.compass.getYaw()
 
         while copter.state is not 'stopped':
-            # lat, long = yield from self.gps.getLatLong()
-            # copter.currentStateSpace.lat = lat
-            # copter.currentStateSpace.long = long
-            # copter.currentStateSpace.altitude = yield from self.bmp.getAltitude()
+            lat, long, velocity, _ = self.gps.latlong
+            copter.currentStateSpace.velocity = velocity
+            copter.currentStateSpace.lat = lat
+            copter.currentStateSpace.long = long
+            copter.currentStateSpace.altitude = yield from self.bmp.getAltitude()
             gyro_out, acc_out =  self.gyro.raw_data()
+
+
+
 
             pitch, roll = ComplementaryFilter(gyro_out, acc_out, 
                                 copter.currentStateSpace.pitch,  copter.currentStateSpace.roll)
 
             copter.currentStateSpace.roll = roll
             copter.currentStateSpace.pitch = pitch
-            copter.currentStateSpace.yaw = self.compass.getYaw()
+            # copter.currentStateSpace.yaw = self.compass.getYaw()
             # if copter.log:
             #     self.copter.currentStateSpace.log()
             yield from asyncio.sleep(0.01)  # interval should be same as dt in ComplementaryFilter(0.01 sec)
