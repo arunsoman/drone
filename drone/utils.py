@@ -1,6 +1,3 @@
-from .model import motor
-
-
 def motorTorque(current, mR, kv, omega):
     return (current * mR + kv * omega)
 

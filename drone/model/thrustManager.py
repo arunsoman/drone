@@ -1,4 +1,4 @@
-from . import motor
+from motors import motor, MotorFactory
 
 
 class ThrustManager(object):
@@ -8,11 +8,11 @@ class ThrustManager(object):
         # 3 -----------4
         # '''
         # '''cw'''
-        self.__motor1 = motor.Motor('m1', 17, simulation=False)
-        self.__motor3 = motor.Motor('m3', 25, simulation=False)
+        self.__motor1 = MotorFactory.getA2212_13t('m1', 17, simulation=False)
+        self.__motor3 = MotorFactory.getA2212_13t('m3', 25, simulation=False)
         # '''ccw'''
-        self.__motor2 = motor.Motor('m2', 18, simulation=False)
-        self.__motor4 = motor.Motor('m4', 22, simulation=False)
+        self.__motor2 = MotorFactory.getA2212_13t('m2', 18, simulation=False)
+        self.__motor4 = MotorFactory.getA2212_13t('m4', 22, simulation=False)
         self.__motors = [self.__motor1, self.__motor2,
                          self.__motor3, self.__motor4, ]
 

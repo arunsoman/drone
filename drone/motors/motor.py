@@ -9,10 +9,10 @@ def threadify(fn):
 
 class Motor(object):
     def __init__(self, name, pin, kv=1000, WMin=0, WMax=100, debug=True, simulation=True):
+
         self.dragCoeff = 1.5
         self.liftConst = 1
         self.omega = 0
-        self.resistence = .1
         self.name = name
         self.powered = False
         self.simulation = simulation
