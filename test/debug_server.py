@@ -17,11 +17,10 @@ class DebugServer(object):
         self.coptor = coptor
 
     def consolidate_data(self):
-        data = {}
-        data.update(self.coptor.currentStateSpace.get_state_dict())
-        data.update(self.coptor.thrustManager.get_pwm_dict())
+        data = ("{" + self.coptor.currentStateSpace.serialize()
+                    + self.coptor.thrustManager.serialize() + "}")
         print("data", data)
-        return json.dumps(data)
+        return data
 
     @asyncio.coroutine
     def instruction_handler(self, websocket):

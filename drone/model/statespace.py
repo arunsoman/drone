@@ -25,6 +25,11 @@ class StateSpace(object):
                 'yaw': self.yaw
                 }
 
+    def serialize(self):
+        return ("""lat": %s,"long": %s,"altitude": %s,"roll": %s,"pitch":%s,"yaw": %s"""
+                % (self.lat, self.long, self.altitude,
+                   self.roll, self.pitch, self.yaw))
+
     def log(self):
         # for testing
         sys.stderr.write(

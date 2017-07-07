@@ -1,4 +1,4 @@
-from motors import motor, MotorFactory
+from drone.motors import motor, MotorFactory
 
 
 class ThrustManager(object):
@@ -110,8 +110,11 @@ class ThrustManager(object):
     def print_motors(self):
         print("\t".join(map(repr, self.__motors)))
 
-    def get_pwm_dict(self):
+    def serialize(self):
         """
         return a dict of pwm of each motor.
         """
-        return {m.name:m.get_w() for m in self.__motors}
+        return "m1:%s,m2:%s,m1:%s,m2:%s" % (self.__motor1.get_w(),
+                                            self.__motor2.get_w(),
+                                            self.__motor2.get_w(),
+                                            self.__motor3.get_w())

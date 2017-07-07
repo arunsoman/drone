@@ -46,18 +46,21 @@ class GPS(object):
                 lat = data[(p[2] + 1):p[3]]
                 lon = data[(p[4] + 1):p[5]]
 
-                s1 = lat[2:len(lat)]
-                s1 = Decimal(s1)
-                s1 = s1 / 60
-                s11 = int(lat[0:2])
-                s1 = s11 + s1
+                try:
+                    s1 = lat[2:len(lat)]
+                    s1 = Decimal(s1)
+                    s1 = s1 / 60
+                    s11 = int(lat[0:2])
+                    s1 = s11 + s1
 
-                s2 = lon[3:len(lon)]
-                s2 = Decimal(s2)
-                s2 = s2 / 60
-                s22 = int(lon[0:3])
-                s2 = s22 + s2
+                    s2 = lon[3:len(lon)]
+                    s2 = Decimal(s2)
+                    s2 = s2 / 60
+                    s22 = int(lon[0:3])
+                    s2 = s22 + s2
 
-                print(s1)
-                print(s2)
-                return s1, s2
+                    print(s1)
+                    print(s2)
+                    return s1, s2
+                except Exception as oops:
+                    print(oops)
