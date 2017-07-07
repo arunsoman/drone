@@ -10,6 +10,7 @@ class StateSpace(object):
         self.roll = 0
         self.pitch = 0
         self.yaw = 0
+        self.velocity = 0
 
     def getVector(self, sp):
         return numpy.array([self.lat - sp.lat,
@@ -26,9 +27,9 @@ class StateSpace(object):
                 }
 
     def serialize(self):
-        return ("""lat": %s,"long": %s,"altitude": %s,"roll": %s,"pitch":%s,"yaw": %s"""
+        return (""""lat": %s,"long": %s,"altitude": %s,"roll": %s,"pitch":%s,"yaw": %s,"velocity":%s """
                 % (self.lat, self.long, self.altitude,
-                   self.roll, self.pitch, self.yaw))
+                   self.roll, self.pitch, self.yaw, self.velocity))
 
     def log(self):
         # for testing
