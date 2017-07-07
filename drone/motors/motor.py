@@ -9,7 +9,6 @@ def threadify(fn):
 
 class Motor(object):
     def __init__(self, name, pin, kv=1000, WMin=0, WMax=100, debug=True, simulation=True):
-
         self.dragCoeff = 1.5
         self.liftConst = 1
         self.omega = 0
@@ -28,6 +27,9 @@ class Motor(object):
             self.__IO = PWM.Servo()
         except ImportError:
             self.simulation = True
+
+    def attachPropeller(self,propeller):
+        self.propeller=propeller
 
     def _setw(self, W):
         "Checks W% is between limits than sets it"
@@ -88,14 +90,17 @@ class Motor(object):
     def getOmegaSq(self):
         return self.omega**2
 
-    def setVoltage(self, volt):
-        self.omega = self.getOmegaGiven(volt)
+    def getThrustGiven(self, rpm, v):
+        c1 = 4.392399*(10**-8)*rpm*(self.propeller.D**3.5)
+        c2 = (4.23333*(10**-4)*rpm*self.propeller.pitch) - v
+        c3 = self.propeller.pitch**(0.5)
+        return c1*c2/c3
 
-    def getVoltageGiven(self, omega):
-        return
-
-    def getOmegaGiven(self, volt):
-        return
+    def getRpmGiven(self, thrust, v):
+        a = 4.392399*(10**-8)*(self.propeller.D**3.5)*4.23333*(10**-4)*(self.propeller.pitch**0.5)
+        -b = 4.392399*(10**-8)*(self.propeller.D**3.5)/(self.propeller.pitch**0.5)
+        c = -thrust
+        return -b+((((b**2)-(4*a*c))**(0.5))/(2*a))
 
     def __repr__(self):
         return "<%s(%s) @ %s>" % (self.name, self.__pin, self.__W)
