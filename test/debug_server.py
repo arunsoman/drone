@@ -39,6 +39,8 @@ class DebugServer(object):
                     self.coptor.thrustManager.pitch(args[0], int(args[1]))
                 elif instr == 'roll':
                     self.coptor.thrustManager.roll(args[0], int(args[1]))
+                elif instr == 'altitude':
+                    self.coptor.thrustManager.altitude(args[0], int(args[1]))
                 elif instr == 'mannual':
                     self.coptor.thrustManager._manual(*map(int, args))
                 else:
