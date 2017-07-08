@@ -1,0 +1,57 @@
+
+        if np.abs(self[1] * self[2] + self[3] * self[0] - 0.5) < 1e-8:
+            roll = 0
+            yaw = 2 * np.arctan2(self[1], self[0])
+        elif np.abs(self[1] * self[2] + self[3] * self[0] + 0.5) < 1e-8:
+            roll = -2 * np.arctan2(self[1], self[0])
+            yaw = 0
+        else:
+            roll = np.arctan2(2 * self[0] * self[1] - 2 * self[2] * self[3], 1 - 2 * self[1] ** 2 - 2 * self[3] ** 2)
+            yaw = np.arctan2(2 * self[0] * self[2] - 2 * self[1] * self[3], 1 - 2 * self[2] ** 2 - 2 * self[3] ** 2)
+        return roll, pitch, yaw
+
+    def to_euler123(self):
+        roll = np.arctan2(-2*(self[2]*self[3] - self[0]*self[1]), self[0]**2 - self[1]**2 - self[2]**2 + self[3]**2)
+        pitch = np.arcsin(2*(self[1]*self[3] + self[0]*self[1]))
+        yaw = np.arctan2(-2*(self[1]*self[2] - self[0]*self[3]), self[0]**2 + self[1]**2 - self[2]**2 - self[3]**2)
+        return roll, pitch, yaw
+
+    def __mul__(self, other):
+        """
+        multiply the given quaternion with another quaternion or a scalar
+        :param other: a Quaternion object or a number
+        :return:
+        """
+        if isinstance(other, Quaternion):
+            w = self._q[0]*other._q[0] - self._q[1]*other._q[1] - self._q[2]*other._q[2] - self._q[3]*other._q[3]
+            x = self._q[0]*other._q[1] + self._q[1]*other._q[0] + self._q[2]*other._q[3] - self._q[3]*other._q[2]
+            y = self._q[0]*other._q[2] - self._q[1]*other._q[3] + self._q[2]*other._q[0] + self._q[3]*other._q[1]
+            z = self._q[0]*other._q[3] + self._q[1]*other._q[2] - self._q[2]*other._q[1] + self._q[3]*other._q[0]
+
+            return Quaternion(w, x, y, z)
+        elif isinstance(other, numbers.Number):
+            q = self._q * other
+            return Quaternion(q)
+
+    def __add__(self, other):
+        """
+        add two quaternions element-wise or add a scalar to each element of the quaternion
+        :param other:
+        :return:
+        """
+        if not isinstance(other, Quaternion):
+            if len(other) != 4:
+                raise TypeError("Quaternions must be added to other quaternions or a 4-element array")
+            q = self.q + other
+        else:
+            q = self.q + other.q
+
+        return Quaternion(q)
+
+    # Implementing other interfaces to ease working with the class
+
+    def _set_q(self, q):
+        self._
+
+    def __array__(self):
+        return self._q
