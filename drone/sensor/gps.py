@@ -3,7 +3,6 @@ import os
 import time
 import asyncio
 
-from decimal import *
 from geopy.distance import vincenty
 
 # for the sake of testing.
@@ -14,10 +13,10 @@ GPIO.setmode(GPIO.BOARD)
 class GPS(object):
     def __init__(self):
         self.port = serial.Serial("/dev/ttyAMA0", baudrate=9600, timeout=1)
-        self.latlong = [0,0,0,time.time()]
-        self.degrees = None
-
-       
+        self.lat = 0
+        self.long = 0
+        self.velocity = 0
+        self.prev_time = time.time()
 
     def __find(self, str, ch):
         for i, ltr in enumerate(str):
@@ -44,32 +43,29 @@ class GPS(object):
                 print(fd)
                 if dif > 50:
                     data = fd[ps:(ps + 50)]
-                    # print(data)
                     p = list(self.__find(data, ","))
-                    # print("xxxxx", p)
                     lat = data[(p[2] + 1):p[3]]
                     lon = data[(p[4] + 1):p[5]]
 
                     try:
-                        # print("hooo")
-                        s1 = lat[2:len(lat)]
-                        s1 = Decimal(s1)
-                        s1 = s1 / 60
-                        s11 = int(lat[0:2])
-                        s1 = s11 + s1
+                        s1 =  float(lat[2:])/ 60   # minutes
+                        s11 = int(lat[:2])         # degrees
+                        self.lat = s11 + s1
 
-                        s2 = lon[3:len(lon)]
-                        s2 = Decimal(s2)
-                        s2 = s2 / 60
-                        s22 = int(lon[0:3])
-                        s2 = s22 + s2
-                        current = [float(s1), float(s2),0,time.time()]
-                        velocity = vincenty(self.latlong[0:1], current[0:1]).meters/(current[3] - self.latlong[3])
-                        current[3] = velocity
-                        self.latlong = current
+                        s2 = float(lon[3:])/60
+                        s22 = int(lon[:3])
+                        self.long = s22 + s2
+
+                        dist = vincenty((self.lat, self.long), (s1, s2)).meters
+                        now = time.time()
+
+                        print("distance covered = ",dist, "time taken = ", now - self.prev_time)
+                        self.velocity = dist/(now - self.prev_time)
+                        self.prev_time = now
+
                     except Exception as oops:
                         print(oops)
-                yield from asyncio.sleep(0.1)
+                yield from asyncio.sleep(0.01)
 
 if __name__ == '__main__':
     print(GPS().getLatLong())

@@ -29,5 +29,5 @@ class SensorConsole(object):
         sp.lat, sp.long, sp.speed, _ = self.gps.getLatLLong()
         sp.altitude = yield from self.bmp.getAltitude()
         gyro_out, acc_out = self.gyro.raw_data()
-        magnetometer = self.compass.getData()
+        magnetometer = self.compass.raw_data()
         sp.roll,sp.pitch,sp.yaw, sp.heading = self.ahrs.get_roll_pitch_yaw(gyro_out, acc_out, magnetometer)

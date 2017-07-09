@@ -54,7 +54,7 @@ class HMC5883L:
             return None
         return round(val * self.__scale, 4)
 
-    def axes(self):
+    def raw_data(self):
         data = self.bus.read_i2c_block_data(self.address, 0x00)
         # print map(hex, data)
         x = self.__convert(data, 3)
@@ -63,7 +63,7 @@ class HMC5883L:
         return (x, y, z)
 
     def heading(self):
-        (x, y, z) = self.axes()
+        (x, y, z) = self.raw_data()
         headingRad = math.atan2(y, x)
         headingRad += self.__declination
 
@@ -85,7 +85,7 @@ class HMC5883L:
         return (degrees, minutes)
 
     def __str__(self):
-        (x, y, z) = self.axes()
+        (x, y, z) = self.raw_data()
         return "Axis X: " + str(x) + "\n" \
                "Axis Y: " + str(y) + "\n" \
                "Axis Z: " + str(z) + "\n" \
