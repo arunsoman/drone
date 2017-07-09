@@ -39,7 +39,7 @@ class Quaternion:
         """
         return Quaternion(self._q[0], -self._q[1], -self._q[2], -self._q[3])
 
-    def to_angle_axis(self):
+    def get_angle_axis(self):
         """
         Returns the quaternion's rotation represented by an Euler angle and axis.
         If the quaternion is the identity quaternion (1, 0, 0, 0), a rotation along the x axis with angle 0 is returned.

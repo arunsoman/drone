@@ -1,11 +1,9 @@
 import asyncio
 
-import numpy
-
+from sensor.sensorconsole import SensorConsole
 from .model.copterDynamics import rigid_transform_3D, getRollPitchYaw
-from .model.thrustManager import ThrustManager
-from .sensorconsole import SensorConsole
 from .model.statespace import StateSpace
+from .model.thrustManager import ThrustManager
 
 
 class HeliCarrier(object):
@@ -15,6 +13,7 @@ class HeliCarrier(object):
         self.currentStateSpace = StateSpace()
         self.initialStateSpace = StateSpace()
         self.thrustManager = ThrustManager()
+        self.sensorConsole = SensorConsole()
         self.state = 'stopped'
         self.log = False
 

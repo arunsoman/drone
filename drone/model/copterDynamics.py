@@ -3,24 +3,7 @@ from numpy import *
 from math import sqrt, atan2
 
 
-# all methods will return only translation vector
-
-def moveTo(a, b):
-    if a.x is b.x and a.y is b.y:
-        # perform vertical motion
-        return [0, 0, b.z - a.z]
-
-    if a.z is b.z:
-        # perform horizontal motion
-        return [b.x - a.x, b.y - a.y, 0]
-    return
-
-
-def rotate(a, axis, theta):
-    return dot(expm3(cross(eye(3), axis / norm(axis) * theta)), a)
-
-
-def rigid_transform_3D(A, B):
+def get_transformation(A, B):
     assert len(A) == len(B)
 
     N = A.shape[0]  # total points
@@ -116,14 +99,6 @@ def getRollPitchYaw(R):
     print("x,y,z")
     print(x, y, z)
     return x, y, z
-
-
-def rotateT():
-    v, axis, theta = [3, 5, 0], [4, 4, 1], 1.2
-    M0 = rotate(v, axis, theta)
-    print("rotatation M")
-    print(M0)
-    #print("dotProduct", dot(M0, v))
 
 
 tt()

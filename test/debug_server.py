@@ -17,7 +17,7 @@ class DebugServer(object):
         self.coptor = coptor
 
     def consolidate_data(self):
-        data = ("{" + self.coptor.currentStateSpace.serialize()
+        data = ("{" + self.coptor.currentStateSpace.serialize() + ','
                     + self.coptor.thrustManager.serialize() + "}")
         print("data", data)
         return data
@@ -57,9 +57,9 @@ class DebugServer(object):
     @asyncio.coroutine
     def handler(self, websocket, path):
         print(" **** debug client connected", websocket.remote_address)
-        consumer_task = asyncio.ensure_future(
+        consumer_task = asyncio.get_event_loop().create_task(
             self.instruction_handler(websocket))
-        producer_task = asyncio.ensure_future(self.uplink_handler(websocket))
+        producer_task = asyncio.get_event_loop().create_task(self.uplink_handler(websocket))
         done, pending = yield from asyncio.wait(
             [consumer_task, producer_task],
             return_when=asyncio.FIRST_COMPLETED,

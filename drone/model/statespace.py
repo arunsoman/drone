@@ -10,30 +10,17 @@ class StateSpace(object):
         self.roll = 0
         self.pitch = 0
         self.yaw = 0
-        self.velocity = 0
-
-    def getVector(self, sp):
-        return numpy.array([self.lat - sp.lat,
-                            self.long - sp.long,
-                            self.altitude - sp.altitude])
-
-    def get_state_dict(self):
-        return {'lat': self.lat,
-                'long': self.long,
-                'altitude': self.altitude,
-                'roll': self.roll,
-                'pitch': self.pitch,
-                'yaw': self.yaw
-                }
+        self.speed = 0
+        self.heading = {}
 
     def serialize(self):
-        return (""""lat": %s,"long": %s,"altitude": %s,"roll": %s,"pitch":%s,"yaw": %s,"velocity":%s """
+        return (""""lat": %s,"long": %s,"altitude": %s,
+                    "roll": %s,"pitch":%s,"yaw": %s,
+                    "speed":%s, "heading":%s """
                 % (self.lat, self.long, self.altitude,
-                   self.roll, self.pitch, self.yaw, self.velocity))
+                   self.roll, self.pitch, self.yaw,
+                   self.speed, self.heading))
 
     def log(self):
-        # for testing
-        sys.stderr.write(
-            "pitch: %s\troll: %s\tyaw: %s\tlat: %s\tlong: %s\talti: %s          \r"
-            % (self.pitch, self.roll, self.yaw, self.lat, self.long, self.altitude))
+        sys.stderr.write(self.serialize())
         sys.stderr.flush()

@@ -95,6 +95,9 @@ class HMC5883L:
     def getYaw(self):
         return 0  # TODO: estimate yaw from heading angle.
 
+    def getData(self):
+        return 0
+
 
 if __name__ == "__main__":
     # see http://www.magnetic-declination.com/
