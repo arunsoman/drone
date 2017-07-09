@@ -95,7 +95,8 @@ class HMC5883L:
     def getYaw(self):
         return 0  # TODO: estimate yaw from heading angle.
 
-    def getData(self):
+    def get_raw_data(self):
+        #TODO
         return 0
 
 
