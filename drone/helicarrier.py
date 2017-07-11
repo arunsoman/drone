@@ -1,10 +1,9 @@
 import asyncio
 
-from sensor.sensorconsole import SensorConsole
-from .model.copterDynamics import rigid_transform_3D, getRollPitchYaw
+from .sensor.sensorconsole import SensorConsole
 from .model.statespace import StateSpace
 from .model.thrustManager import ThrustManager
-
+from .model.copterDynamics import  get_transformation
 
 class HeliCarrier(object):
     def __init__(self):
@@ -31,8 +30,8 @@ class HeliCarrier(object):
         return self.currentStateSpace
 
     def moveTo(self, point):
-        r, t = rigid_transform_3D(
-            self.initialStateSpace.getVector(self.currentLocation),
+        r, t = get_transformation(
+            self.currentStateSpace.getVector(self.currentLocation),
             self.initialPlan.getVector(point)
         )
         roll, pitch, yaw = getRollPitchYaw(r)

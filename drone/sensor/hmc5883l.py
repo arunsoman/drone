@@ -23,7 +23,7 @@ class HMC5883L:
         8.10: [7, 4.35],
     }
 
-    def __init__(self, port=1, address=0x1E, gauss=1.3, declination=(1, 57)):
+    def __init__(self, port=1, address=0x0E, gauss=1.3, declination=(1, 57)):
         self.bus = smbus.SMBus(port)
         self.address = address
 

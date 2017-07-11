@@ -8,12 +8,12 @@ def threadify(fn):
 
 
 class Motor(object):
-    def __init__(self, name, pin, kv=1000, WMin=0, WMax=100, debug=True, simulation=True):
+    def __init__(self, name, pin, kv=1000, WMin=0, WMax=100, debug=True, simulation=False):
         self.dragCoeff = 1.5
         self.liftConst = 1
         self.omega = 0
         self.name = name
-        self.powered = False
+        self.powered = True
         self.simulation = simulation
         self.__pin = pin
         self.__kv = kv
@@ -26,6 +26,7 @@ class Motor(object):
             from RPIO import PWM
             self.__IO = PWM.Servo()
         except ImportError:
+            print("simulation ****")
             self.simulation = True
 
     def attachPropeller(self,propeller):
@@ -42,6 +43,7 @@ class Motor(object):
         PW = (1000 + (self.__W) * 10)
         # Set servo to xxx us
         if self.powered:
+            print("******** setting pwm",PW)
             self.__IO.set_servo(self.__pin, PW)
 
     def get_w(self):
@@ -66,6 +68,7 @@ class Motor(object):
         "Stop PWM signal"
         self._setw(0)
         if self.powered:
+            print ("powered is :",self.powered)
             self.__IO.stop_servo(self.__pin)
             self.powered = False
 
@@ -98,7 +101,7 @@ class Motor(object):
 
     def getRpmGiven(self, thrust, v):
         a = 4.392399*(10**-8)*(self.propeller.D**3.5)*4.23333*(10**-4)*(self.propeller.pitch**0.5)
-        -b = 4.392399*(10**-8)*(self.propeller.D**3.5)/(self.propeller.pitch**0.5)
+        b = 4.392399*(10**-8)*(self.propeller.D**3.5)/(self.propeller.pitch**0.5)
         c = -thrust
         return -b+((((b**2)-(4*a*c))**(0.5))/(2*a))
 

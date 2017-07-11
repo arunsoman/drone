@@ -3,7 +3,7 @@ import warnings
 import numpy as np
 from numpy.linalg import norm
 
-from sensor.sensorfuse.quaternion import Quaternion
+from drone.sensor.sensorfuse.quaternion import Quaternion
 
 
 class MadgwickAHRS:
@@ -26,7 +26,7 @@ class MadgwickAHRS:
         if beta is not None:
             self.beta = beta
 
-    def get_roll_pitch_yaw_heading(self, gyroscope, accelerometer, magnetometer):
+    def get_roll_pitch_yaw_heading(self, gyroscope, accelerometer, magnetometer=None):
         """
         Perform one update step with data from a AHRS sensor array
         :param gyroscope: A three-element array containing the gyroscope data in radians per second.
@@ -34,6 +34,10 @@ class MadgwickAHRS:
         :param magnetometer: A three-element array containing the magnetometer data. Can be any unit since a normalized value is used.
         :return:
         """
+
+        if not magnetometer:
+            return self.update_imu(gyroscope, accelerometer)
+
         q = self.quaternion
 
         gyroscope = np.array(gyroscope, dtype=float).flatten()
@@ -83,6 +87,8 @@ class MadgwickAHRS:
         self.quaternion = Quaternion(q / norm(q))  # normalise quaternion
         return self.quaternion.to_euler_angles(), self.quaternion.get_angle_axis()
 
+
+
     def update_imu(self, gyroscope, accelerometer):
         """
         Perform one update step with data from a IMU sensor array
@@ -119,5 +125,7 @@ class MadgwickAHRS:
 
         # Integrate to yield quaternion
         q += qdot * self.samplePeriod
+        #print("123 qu",q.get_angle_axis())
         self.quaternion = Quaternion(q / norm(q))  # normalise quaternion
+        #print("123 quN",self.quaternion.get_angle_axis())
         return self.quaternion.to_euler_angles()
