@@ -18,7 +18,7 @@ class HeliCarrier(object):
 
     def start(self):
         (asyncio.get_event_loop()
-            .create_task(SensorConsole().readSensorData(self)))
+            .create_task(self.sensorConsole.readSensorData(self)))
         self.thrustManager.startEngine()
         self.state = "started"
 

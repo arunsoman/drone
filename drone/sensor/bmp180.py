@@ -170,7 +170,7 @@ class BMP180(object):
         self._logger.debug('Pressure {0} Pa'.format(p))
         return p
 
-    @asyncio.coroutine
+    # @asyncio.coroutine
     def getAltitude(self, sealevel_pa=101325.0):
         """Calculates the altitude in meters."""
         # Calculation taken straight from section 3.6 of the datasheet.

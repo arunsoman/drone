@@ -32,6 +32,9 @@ class GPS(object):
     @asyncio.coroutine
     def start_recording(self):
         print("inside gps")
+        self.port.write(b"$PMTK397,0.2*3F\r\n")
+        self.port.write(b"$PMTK397,0.2*3F\r\n")
+        self.port.write(b"$PMTK220,100*2F\r\n")
         while self.shutdown:
             fd = self.port.readline()
             yield from asyncio.sleep(0)

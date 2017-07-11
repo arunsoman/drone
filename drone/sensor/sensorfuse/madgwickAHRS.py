@@ -128,4 +128,41 @@ class MadgwickAHRS:
         #print("123 qu",q.get_angle_axis())
         self.quaternion = Quaternion(q / norm(q))  # normalise quaternion
         #print("123 quN",self.quaternion.get_angle_axis())
-        return self.quaternion.to_euler_angles()
+
+        return self.set()
+        
+        # return self.quaternion.to_euler_angles()
+
+    def set(self):
+            q1 = self.quaternion
+            sqw = q1[0] * q1[0]
+            sqx = q1[1] * q1[1]
+            sqy = q1[2] * q1[2]
+            sqz = q1[3] * q1[3]
+            piby2 = math.pi/2
+            unit = sqx + sqy + sqz + sqw; # if normalised is one, otherwise is correction factor
+            test = q1[1]*q1[2] + q1[3]*q1[0]
+
+            print( "***********", "test", test," unit",unit * 0.499)
+            # if (test > 0.499*unit): # singularity at north pole
+            #     heading = 2 * math.atan2(q1[1],q1[0])
+            #     attitude = piby2
+            #     bank = 0;
+            #     return
+
+            # if (test < -0.499*unit): # singularity at south pole
+            #     heading = -2 * math.atan2(q1[1],q1[0])
+            #     attitude = -piby2
+            #     bank = 0;
+            #     return;
+
+            heading = math.atan2(2*q1[2]*q1[0]-2*q1[1]*q1[3] , sqx - sqy - sqz + sqw)
+            attitude = math.asin(2*test/unit);
+            bank = math.atan2(2*q1[1]*q1[0]-2*q1[2]*q1[3] , -sqx + sqy - sqz + sqw)
+
+            return heading,attitude,bank
+
+
+
+
+import math

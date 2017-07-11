@@ -14,17 +14,17 @@ def launch():
     copter = HeliCarrier()
     copter.start()
 
-    s1 = s2 = s3 = s4 = 60
-    s = [s1, s2, s3, s4]
-    copter._manual(s1, s2, s3, s4)
-    yield from asyncio.sleep(4)
-    yield from testSingle(copter, s1+20, s1 + 20, 0, s)
-    yield from asyncio.sleep(4)
-    yield from testSingle(copter, s1+30, s1 + 20, 1, s)
-    yield from asyncio.sleep(4)
-    yield from testDouble(copter, s1+40, s1 + 20, 0, 1, s)
-    yield from asyncio.sleep(4)
-    yield from testDouble(copter, s1+70, s1 + 20, 2, 3, s)
+    # s1 = s2 = s3 = s4 = 60
+    # s = [s1, s2, s3, s4]
+    # copter._manual(s1, s2, s3, s4)
+    # yield from asyncio.sleep(4)
+    # yield from testSingle(copter, s1+20, s1 + 20, 0, s)
+    # yield from asyncio.sleep(4)
+    # yield from testSingle(copter, s1+30, s1 + 20, 1, s)
+    # yield from asyncio.sleep(4)
+    # yield from testDouble(copter, s1+40, s1 + 20, 0, 1, s)
+    # yield from asyncio.sleep(4)
+    # yield from testDouble(copter, s1+70, s1 + 20, 2, 3, s)
 
     if ENABLE_DEBUG_SERVER:
         from  debug_server import DebugServer

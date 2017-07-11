@@ -42,7 +42,7 @@ class GY521(object):
             self.read_word_2c(0x3f)
         ])
         return gyro_out, acc_out
-
+    
     def read_byte(self, adr):
         return self.bus.read_byte_data(self.address, adr)
 
