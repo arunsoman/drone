@@ -21,10 +21,8 @@ class GPS(object):
         self.speed = 0
         self.prev_time = time.time()
 
-    def __find(self, str, ch):
-        for i, ltr in enumerate(str):
-            if ltr == ch:
-                yield i
+    def __decode(self, str):
+        return str.decode('ascii',errors='ignore')
 
     def raw_data(self):
         return self.lat,self.long,self.speed, self.course
