@@ -1,31 +1,34 @@
 import asyncio
 
-from drone.sensor import GPS, BMP180, HMC5883L, Orientation
+from drone.sensor import GPS, BMP180, HMC5883L, Orientation, Anemometer
 
 class SensorConsole(object):
-    def __init__(self):
+    def __init__(self,copter):
+        self.copter = copter
         self.gps = GPS()
         self.bmp = BMP180()
         self.orientation = Orientation()
+        self.anemomter = Anemometer(self.copter.currentStateSpace, self.gps, self.orientation.mpu)
         # self.gyro = GY521()
         # self.compass = HMC5883L()
         # self.ahrs = MadgwickAHRS()
         asyncio.get_event_loop().create_task(self.gps.start_recording())
+        asyncio.get_event_loop().create_task(self.anemomter.start_calculation())
         asyncio.get_event_loop().create_task(self.orientation.start_recording())
 
     @asyncio.coroutine
-    def readSensorData(self, copter):
+    def readSensorData(self):
         print("this is inside readSensorData")
-        self.updateStateSpace(copter.initialStateSpace)
+        self.updateStateSpace(self.copter.initialStateSpace)
 
-        while copter.state is not 'stopped':
-            self.updateStateSpace(copter.currentStateSpace)
+        while self.copter.state is not 'stopped':
+            self.updateStateSpace(self.copter.currentStateSpace)
             yield from asyncio.sleep(0)  # interval should be same as dt in ComplementaryFilter(0.01 sec)
         
         print(" stopping readSensorData coroutine:")
 
     def updateStateSpace(self, sp):
-        sp.lat, sp.long, sp.speed, sp.course = self.gps.raw_data()
+        sp.lat, sp.long = self.gps.raw_data()
         sp.altitude = self.bmp.getAltitude()
         # gyro_out, acc_out = self.gyro.raw_data()
         # magnetometer = self.compass.raw_data()
