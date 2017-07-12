@@ -14,6 +14,18 @@ class MPU6050:
     # Register map based on Jeff Rowberg <jeff@rowberg.net> source code at
     # https://github.com/jrowberg/i2cdevlib/blob/master/Arduino/MPU6050/MPU6050.h
 
+    GRAVITIY_MS2 = 9.80665
+
+    ACCEL_SCALE_MODIFIER_2G = 16384.0
+    ACCEL_SCALE_MODIFIER_4G = 8192.0
+    ACCEL_SCALE_MODIFIER_8G = 4096.0
+    ACCEL_SCALE_MODIFIER_16G = 2048.0
+
+    ACCEL_RANGE_2G = 0x00
+    ACCEL_RANGE_4G = 0x08
+    ACCEL_RANGE_8G = 0x10
+    ACCEL_RANGE_16G = 0x18
+
     MPU6050_ADDRESS_AD0_LOW       = 0x68 # address pin low (GND), default for InvenSense evaluation board
     MPU6050_ADDRESS_AD0_HIGH      = 0x69 # address pin high (VCC)
     MPU6050_DEFAULT_ADDRESS       = MPU6050_ADDRESS_AD0_LOW
@@ -1503,10 +1515,10 @@ class MPU6050:
             packet[12] -= 256
 
         data = {
-            'w' : ((packet[0] << 8) + packet[1]) / 16384.0,
-            'x' : ((packet[4] << 8) + packet[5]) / 16384.0,
-            'y' : ((packet[8] << 8) + packet[9]) / 16384.0,
-            'z' : ((packet[12] << 8) + packet[13]) / 16384.0}
+            'w' : ((packet[0] << 8) + packet[1]) / self.ACCEL_SCALE_MODIFIER_2G,
+            'x' : ((packet[4] << 8) + packet[5]) / self.ACCEL_SCALE_MODIFIER_2G,
+            'y' : ((packet[8] << 8) + packet[9]) / self.ACCEL_SCALE_MODIFIER_2G,
+            'z' : ((packet[12] << 8) + packet[13]) / self.ACCEL_SCALE_MODIFIER_2G}
 
         return data
 
@@ -1734,3 +1746,65 @@ class MPU6050:
         # Resetting FIFO and clearing INT status one last time
         self.resetFIFO()
         self.getIntStatus()
+
+    def read_accel_range(self, raw = False):
+        """Reads the range the accelerometer is set to.
+        If raw is True, it will return the raw value from the ACCEL_CONFIG
+        register
+        If raw is False, it will return an integer: -1, 2, 4, 8 or 16. When it
+        returns -1 something went wrong.
+        """
+        raw_data = self.i2c.bus.read_byte_data(self.address, self.MPU6050_RA_ACCEL_CONFIG)
+
+        if raw is True:
+            return raw_data
+        elif raw is False:
+            if raw_data == self.ACCEL_RANGE_2G:
+                return 2
+            elif raw_data == self.ACCEL_RANGE_4G:
+                return 4
+            elif raw_data == self.ACCEL_RANGE_8G:
+                return 8
+            elif raw_data == self.ACCEL_RANGE_16G:
+                return 16
+            else:
+                return -1
+
+    def get_accel_data(self, g = False):
+
+        print("****")
+        """Gets and returns the X, Y and Z values from the accelerometer.
+        If g is True, it will return the data in g
+        If g is False, it will return the data in m/s^2
+        Returns a dictionary with the measurement results.
+        """
+        x =  self.i2c.readS16(self. MPU6050_RA_ACCEL_XOUT_H)
+        y =  self.i2c.readS16(self. MPU6050_RA_ACCEL_YOUT_H)
+        z =  self.i2c.readS16(self. MPU6050_RA_ACCEL_ZOUT_H)
+
+        accel_scale_modifier = None
+        accel_range = self.read_accel_range(True)
+
+        if accel_range == self.ACCEL_RANGE_2G:
+            accel_scale_modifier = self.ACCEL_SCALE_MODIFIER_2G
+        elif accel_range == self.ACCEL_RANGE_4G:
+            accel_scale_modifier = self.ACCEL_SCALE_MODIFIER_4G
+        elif accel_range == self.ACCEL_RANGE_8G:
+            accel_scale_modifier = self.ACCEL_SCALE_MODIFIER_8G
+        elif accel_range == self.ACCEL_RANGE_16G:
+            accel_scale_modifier = self.ACCEL_SCALE_MODIFIER_16G
+        else:
+            print("Unkown range - accel_scale_modifier set to self.ACCEL_SCALE_MODIFIER_2G")
+            accel_scale_modifier = self.ACCEL_SCALE_MODIFIER_2G
+
+        x = x / accel_scale_modifier
+        y = y / accel_scale_modifier
+        z = z / accel_scale_modifier
+
+        if g is True:
+            return {'x': x, 'y': y, 'z': z}
+        elif g is False:
+            x = x * self.GRAVITIY_MS2
+            y = y * self.GRAVITIY_MS2
+            z = z * self.GRAVITIY_MS2
+            return {'x': x, 'y': y, 'z': z}

@@ -1,16 +1,18 @@
 import asyncio
 
-from drone.sensor import GPS, BMP180, HMC5883L, Orientation
+from drone.sensor import GPS, BMP180, HMC5883L, Orientation, Anemometer
 
 class SensorConsole(object):
     def __init__(self):
         self.gps = GPS()
         self.bmp = BMP180()
         self.orientation = Orientation()
+        self.anemomter = Anemometer(self.gps, self.orientation.mpu )
         # self.gyro = GY521()
         # self.compass = HMC5883L()
         # self.ahrs = MadgwickAHRS()
         asyncio.get_event_loop().create_task(self.gps.start_recording())
+        asyncio.get_event_loop().create_task(self.anemomter.start_calculation())
         asyncio.get_event_loop().create_task(self.orientation.start_recording())
 
     @asyncio.coroutine

@@ -19,10 +19,14 @@ class GPS(object):
         self.degrees = None
         self.shutdown = True
         self.speed = 0
-        self.prev_time = time.time()
+        self.last_time = time.time()
+        self.callbacks = []
 
     def __decode(self, str):
         return str.decode('ascii',errors='ignore')
+
+    def register(self, callback):
+        self.callbacks.append(callback)
 
     def raw_data(self):
         return self.lat,self.long,self.speed, self.course
@@ -30,19 +34,25 @@ class GPS(object):
     @asyncio.coroutine
     def start_recording(self):
         print("inside gps")
-        self.port.write(b"$PMTK397,0.2*3F\r\n")
+        self.port.write(b"$PMTK397,0*23F\r\n")
         self.port.write(b"$PMTK397,0.2*3F\r\n")
         self.port.write(b"$PMTK220,100*2F\r\n")
         while self.shutdown:
             fd = self.port.readline()
-            yield from asyncio.sleep(0)
             if fd.startswith(b'$GPRMC'):
                 # print("*******", fd)
                 result = fd.split(b',')
                 if result[2] == b'A':
+                    now = time.time()
                     try:
-                        self.lat = int(result[3][:2]) + float(result[3][2:].decode('ascii',errors='ignore'))/60
-                        self.long = int(result[5][:3]) + float(result[5][3:].decode('ascii',errors='ignore')) / 60
+                        lat = int(result[3][:2]) + float(result[3][2:].decode('ascii',errors='ignore'))/60
+                        lon = int(result[5][:3]) + float(result[5][3:].decode('ascii',errors='ignore')) / 60
+                        if self.long != lon or self.lat != lat:
+                            dist = vincenty((self.lat, self.long),(lat,lon)).meters
+                            speed = dist/ (now - self.last_time)
+                            for cb in self.callbacks:
+                                cb(speed)
+                        self.lat, self.long,self.last_time = lat, lon, now
                     except Exception as oops:
                         print(oops)
                     # now = time.time()
@@ -55,6 +65,9 @@ class GPS(object):
                 try:
                     self.course = float(result[1].decode('ascii',errors='ignore'))
                     self.speed = float(result[7].decode('ascii',errors='ignore'))
+                    for cb in self.callbacks:
+                        cb(speed)
+
                 except Exception as oops:
                     print(oops)
             else:
