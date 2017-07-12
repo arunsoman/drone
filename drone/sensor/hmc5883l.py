@@ -1,14 +1,7 @@
 import math
 import time
 import sys
-
-
-try:
-    # for the sake of testing.
-    import smbus
-except ImportError:
-    from . import _moking as smbus
-
+import smbus
 
 class HMC5883L:
 
