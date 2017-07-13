@@ -21,6 +21,7 @@ class GPS(object):
         self.speed = 0
         self.last_time = time.time()
         self.callbacks = []
+        self.activated = False
 
     def __decode(self, str):
         return str.decode('ascii',errors='ignore')
@@ -29,7 +30,7 @@ class GPS(object):
         self.callbacks.append(callback)
 
     def raw_data(self):
-        return self.lat,self.long,self.speed, self.course
+        return self.lat,self.long
 
     @asyncio.coroutine
     def start_recording(self):
@@ -44,6 +45,8 @@ class GPS(object):
                 result = fd.split(b',')
                 if result[2] == b'A':
                     now = time.time()
+                    self.activated = True
+
                     try:
                         lat = int(result[3][:2]) + float(result[3][2:].decode('ascii',errors='ignore'))/60
                         lon = int(result[5][:3]) + float(result[5][3:].decode('ascii',errors='ignore')) / 60
@@ -55,21 +58,28 @@ class GPS(object):
                         self.lat, self.long,self.last_time = lat, lon, now
                     except Exception as oops:
                         print(oops)
+
+                else:
+                    self.activated = False
+
                     # now = time.time()
                     # dist = vincenty((self.lat, self.long),(lat,lon)).meters / (current[3] - self.latlong[3])
                     # current[3] = velocity
                     # self.latlong = current
                     # print("latlongg..", self.lat, self.long)
             if fd.startswith(b'$GPVTG'):
-                result = fd.split(b',')
-                try:
-                    self.course = float(result[1].decode('ascii',errors='ignore'))
-                    self.speed = float(result[7].decode('ascii',errors='ignore'))
-                    for cb in self.callbacks:
-                        cb(speed)
+                if self.activated:
+                    print(fd)
+                    result = fd.split(b',')
+                    try:
+                        gps_speed = float(result[7].decode('ascii',errors='ignore'))
+                        print("speed from gps", gps_speed)
 
-                except Exception as oops:
-                    print(oops)
+                        for cb in self.callbacks:
+                            cb(gps_speed)
+
+                    except Exception as oops:
+                        print(oops)
             else:
                 # print("ignoring..", fd)
                 pass
