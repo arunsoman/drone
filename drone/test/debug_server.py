@@ -19,7 +19,7 @@ class DebugServer(object):
     def consolidate_data(self):
         data = ("{" + self.coptor.currentStateSpace.serialize() + ','
                     + self.coptor.thrustManager.serialize() + "}")
-        print("data", data)
+        # print("data", data)
         return data
 
     @asyncio.coroutine

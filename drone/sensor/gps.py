@@ -53,6 +53,7 @@ class GPS(object):
                         if self.long != lon or self.lat != lat:
                             dist = vincenty((self.lat, self.long),(lat,lon)).meters
                             speed = dist/ (now - self.last_time)
+                            print("speed from latlong", speed)
                             for cb in self.callbacks:
                                 cb(speed)
                         self.lat, self.long,self.last_time = lat, lon, now

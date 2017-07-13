@@ -1771,8 +1771,6 @@ class MPU6050:
                 return -1
 
     def get_accel_data(self, g = False):
-
-        print("****")
         """Gets and returns the X, Y and Z values from the accelerometer.
         If g is True, it will return the data in g
         If g is False, it will return the data in m/s^2
