@@ -94,7 +94,6 @@ class BMP180(object):
 
     @asyncio.coroutine
     def start_recording(self):
-        print("start recording bmp")
         while True:
             self.__read_raw_temp()
             self.__read_raw_pressure()
