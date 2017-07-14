@@ -50,6 +50,8 @@ class BMP180(object):
         self._device = i2c.get_i2c_device(address, **kwargs)
         # Load calibration values.
         self._load_calibration()
+        self.raw_temp=0
+        self.raw_pressure=0
 
     def _load_calibration(self):
         self.cal_AC1 = self._device.readS16BE(BMP085_CAL_AC1)   # INT16
@@ -92,13 +94,14 @@ class BMP180(object):
 
     @asyncio.coroutine
     def start_recording(self):
+        print("start recording bmp")
         while True:
             self.__read_raw_temp()
             self.__read_raw_pressure()
             yield from asyncio.sleep(1)
 
     @asyncio.coroutine
-    def ___read_raw_temp(self):
+    def __read_raw_temp(self):
         """Reads the raw (uncompensated) temperature from the sensor."""
         self._device.write8(BMP085_CONTROL, BMP085_READTEMPCMD)
         yield from asyncio.sleep(0.005)  # Wait 5ms

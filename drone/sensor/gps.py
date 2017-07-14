@@ -50,12 +50,12 @@ class GPS(object):
                     try:
                         lat = int(result[3][:2]) + float(result[3][2:].decode('ascii',errors='ignore'))/60
                         lon = int(result[5][:3]) + float(result[5][3:].decode('ascii',errors='ignore')) / 60
-                        if self.long != lon or self.lat != lat:
-                            dist = vincenty((self.lat, self.long),(lat,lon)).meters
-                            speed = dist/ (now - self.last_time)
-                            print("speed from latlong", speed)
-                            for cb in self.callbacks:
-                                cb(speed)
+                        # if self.long != lon or self.lat != lat:
+                        #     dist = vincenty((self.lat, self.long),(lat,lon)).meters
+                        #     speed = dist/ (now - self.last_time)
+                        #     print("speed from latlong", speed)
+                        #     for cb in self.callbacks:
+                        #         cb(speed)
                         self.lat, self.long,self.last_time = lat, lon, now
                     except Exception as oops:
                         print(oops)

@@ -14,6 +14,7 @@ class SensorConsole(object):
         # self.compass = HMC5883L()
         # self.ahrs = MadgwickAHRS()
         asyncio.get_event_loop().create_task(self.gps.start_recording())
+        asyncio.get_event_loop().create_task(self.bmp.start_recording())
         asyncio.get_event_loop().create_task(self.anemomter.start_calculation())
         asyncio.get_event_loop().create_task(self.orientation.start_recording())
 
