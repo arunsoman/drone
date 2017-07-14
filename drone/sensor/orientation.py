@@ -27,7 +27,7 @@ class Orientation(object):
                 if fifoCount == 1024:
                     # reset so we can continue cleanly
                     self.mpu.resetFIFO()
-                    print('FIFO overflow!')
+                    # print('FIFO overflow!')
 
 
                 # wait for correct available data length, should be a VERY short wait

@@ -4,8 +4,9 @@ from drone.sensor import GPS, BMP180, HMC5883L, Orientation, Anemometer
 
 class SensorConsole(object):
     def __init__(self,copter):
-        self.copter = copter
+        self.copter=copter
         self.gps = GPS()
+
         self.bmp = BMP180()
         self.orientation = Orientation()
         self.anemomter = Anemometer(self.copter.currentStateSpace, self.gps, self.orientation.mpu)
