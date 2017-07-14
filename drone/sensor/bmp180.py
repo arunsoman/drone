@@ -90,37 +90,44 @@ class BMP180(object):
         self.cal_MC = -8711
         self.cal_MD = 2868
 
-    def read_raw_temp(self):
+    @asyncio.coroutine
+    def start_recording(self):
+        while True:
+            self.__read_raw_temp()
+            self.__read_raw_pressure()
+            yield from asyncio.sleep(1)
+
+    @asyncio.coroutine
+    def ___read_raw_temp(self):
         """Reads the raw (uncompensated) temperature from the sensor."""
         self._device.write8(BMP085_CONTROL, BMP085_READTEMPCMD)
-        time.sleep(0.005)  # Wait 5ms
-        raw = self._device.readU16BE(BMP085_TEMPDATA)
-        self._logger.debug('Raw temp 0x{0:X} ({1})'.format(raw & 0xFFFF, raw))
-        return raw
+        yield from asyncio.sleep(0.005)  # Wait 5ms
+        self.raw_temp = self._device.readU16BE(BMP085_TEMPDATA)
+        self._logger.debug('Raw temp 0x{0:X} ({1})'.format(self.raw_temp & 0xFFFF, self.raw_temp))
 
-    def read_raw_pressure(self):
+    @asyncio.coroutine
+    def __read_raw_pressure(self):
         """Reads the raw (uncompensated) pressure level from the sensor."""
         self._device.write8(
             BMP085_CONTROL, BMP085_READPRESSURECMD + (self._mode << 6))
         if self._mode == BMP085_ULTRALOWPOWER:
-            time.sleep(0.005)
+            yield from asyncio.sleep(0.005)
         elif self._mode == BMP085_HIGHRES:
-            time.sleep(0.014)
+            yield from asyncio.sleep(0.014)
         elif self._mode == BMP085_ULTRAHIGHRES:
-            time.sleep(0.026)
+            yield from asyncio.sleep(0.026)
         else:
-            time.sleep(0.008)
+            yield from asyncio.sleep(0.008)
         msb = self._device.readU8(BMP085_PRESSUREDATA)
         lsb = self._device.readU8(BMP085_PRESSUREDATA + 1)
         xlsb = self._device.readU8(BMP085_PRESSUREDATA + 2)
-        raw = ((msb << 16) + (lsb << 8) + xlsb) >> (8 - self._mode)
+        self.raw_pressure = ((msb << 16) + (lsb << 8) + xlsb) >> (8 - self._mode)
         self._logger.debug(
-            'Raw pressure 0x{0:04X} ({1})'.format(raw & 0xFFFF, raw))
-        return raw
+            'Raw pressure 0x{0:04X} ({1})'.format(self.raw_pressure & 0xFFFF, self.raw_pressure))
 
     def read_temperature(self):
         """Gets the compensated temperature in degrees celsius."""
-        UT = self.read_raw_temp()
+        UT = self.raw_temp
         # Datasheet value for debugging:
         #UT = 27898
         # Calculations below are taken straight from section 3.5 of the datasheet.
@@ -133,8 +140,8 @@ class BMP180(object):
 
     def read_pressure(self):
         """Gets the compensated pressure in Pascals."""
-        UT = self.read_raw_temp()
-        UP = self.read_raw_pressure()
+        UT = self.raw_temp
+        UP = self.raw_pressure
         # Datasheet values for debugging:
         #UT = 27898
         #UP = 23843
@@ -174,7 +181,7 @@ class BMP180(object):
     def getAltitude(self, sealevel_pa=101325.0):
         """Calculates the altitude in meters."""
         # Calculation taken straight from section 3.6 of the datasheet.
-        pressure = float(self.read_pressure())
+        pressure = float(self.raw_pressure)
         altitude = 44330.0 * (1.0 - pow(pressure / sealevel_pa, (1.0 / 5.255)))
         self._logger.debug('Altitude {0} m'.format(altitude))
         return altitude
@@ -182,7 +189,7 @@ class BMP180(object):
     def read_sealevel_pressure(self, altitude_m=0.0):
         """Calculates the pressure at sealevel when given a known altitude in
         meters. Returns a value in Pascals."""
-        pressure = float(self.read_pressure())
+        pressure = float(self.raw_pressure)
         p0 = pressure / pow(1.0 - altitude_m / 44330.0, 5.255)
         self._logger.debug('Sealevel pressure {0} Pa'.format(p0))
         return p0
