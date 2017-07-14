@@ -5,9 +5,7 @@ from math import sqrt, atan2
 
 def get_transformation(A, B):
     assert len(A) == len(B)
-
     N = A.shape[0]  # total points
-
     centroid_A = mean(A, axis=0)
     centroid_B = mean(B, axis=0)
 
@@ -17,9 +15,7 @@ def get_transformation(A, B):
 
     # dot is matrix multiplication for array
     H = transpose(AA) * BB
-
     U, S, Vt = linalg.svd(H)
-
     R = Vt.T * U.T
 
     # special reflection case
@@ -30,9 +26,6 @@ def get_transformation(A, B):
 
     t = -R * centroid_A.T + centroid_B.T
     return R, t
-
-
-
 
 # Calculates rotation matrix to euler angles
 # The result is the same as MATLAB except the order
